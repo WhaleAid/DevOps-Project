@@ -19,6 +19,16 @@ resource "azurerm_resource_group" "rg_main" {
     }
 }
 
+module "storage_account" {
+  source         = "./modules/storage_account"
+  acccount_name  = var.storage_account_name
+  resource_group = azurerm_resource_group.rg_main
+  container_envs = ["dev", "test", "prod"]
+  tags = {
+    environment = "Terraform Lab"
+  }
+}
+
 module "redis" {
     source = "./modules/redis"
     account_name= var.redis_account_name
