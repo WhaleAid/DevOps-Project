@@ -1,4 +1,2 @@
-resource_group = "rg-ESGI-NCHOBY-KHALQALLAH"
+student_name = "NCHOBYKHALQALLAH"
 location = "westeurope"
-storage_account_name = "rgesginchobykhalqallah"
-redis_account_name = "rgesginchobykhalqallah"
