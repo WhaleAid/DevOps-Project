@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "rg_main" {
-    name = "rs-ESGI-${var.student_name}"
+    name = "rg-ESGI-${var.student_name}"
     location = var.resource_location
     tags = {
         environment = "Terraform Lab"
@@ -34,8 +34,25 @@ resource "azurerm_kubernetes_cluster" "aks_esgi" {
     }
 }
 
+resource "azurerm_public_ip" "aks_public_ip" {
+    name = "aksESGI-${var.student_name}"
+    location = azurerm_resource_group.rg_main.location
+    resource_group_name = azurerm_resource_group.rg_main.name
+    allocation_method = "Static"
+    sku = "Standard"
+
+    depends_on = [ azurerm_kubernetes_cluster.aks_esgi ]
+}
+
 resource "azurerm_role_assignment" "acr_pull_role" {
     scope                = azurerm_container_registry.acr_main.id
     role_definition_name = "AcrPull"
+    principal_id         = azurerm_kubernetes_cluster.aks_esgi.kubelet_identity.0.object_id
+    depends_on =  [ azurerm_kubernetes_cluster.aks_esgi ]
+}
+
+resource "azurerm_role_assignment" "acr_push_role" {
+    scope                = azurerm_container_registry.acr_main.id
+    role_definition_name = "AcrPush"
     principal_id         = azurerm_kubernetes_cluster.aks_esgi.kubelet_identity.0.object_id
 }

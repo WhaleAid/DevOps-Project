@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-redis-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-redis
+  template:
+    metadata:
+      labels:
+        app: flask-redis
+    spec:
+      containers:
+        - name: flask-container
+          image: acresginchobykhalqallahy.azurecr.io/flask-app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+            - name: REDIS_PORT
+              value: "6379"
+        - name: redis-container
+          image: redis
+          ports:
+            - containerPort: 6379
