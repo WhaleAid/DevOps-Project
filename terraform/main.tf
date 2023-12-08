@@ -48,7 +48,6 @@ resource "azurerm_role_assignment" "acr_pull_role" {
     scope                = azurerm_container_registry.acr_main.id
     role_definition_name = "AcrPull"
     principal_id         = azurerm_kubernetes_cluster.aks_esgi.kubelet_identity.0.object_id
-    depends_on =  [ azurerm_kubernetes_cluster.aks_esgi ]
 }
 
 resource "azurerm_role_assignment" "acr_push_role" {
