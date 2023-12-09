@@ -1,12 +1,29 @@
-resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress"
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "nginx-ingress-controller"
-  namespace  = "default"
-  version    = "9.9.4"
-  set {
-    name  = "controller.service.loadBalancerIP"
-    value = azurerm_public_ip.aks_public_ip.ip_address
+# provider kubernetes {
+#   config_path = "~/.kube/config"
+#   config_context = "minikube"
+# }
+
+
+
+resource "kubernetes_ingress" "example" {
+  wait_for_load_balancer = true
+  metadata {
+    name = "example"
+    annotations = {
+      "kubernetes.io/ingress.class" = "nginx"
+    }
+  }
+  spec {
+    rule {
+      http {
+        path {
+          path = "/*"
+          backend {
+            service_name = azurerm_kubernetes_cluster.aks_esgi.name
+            service_port = 2345
+          }
+        }
+      }
+    }
   }
 }
-
